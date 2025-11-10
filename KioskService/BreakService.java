@@ -1,4 +1,4 @@
-package StudyCafe;
+package studycafe;
 
 public class BreakService {
 
