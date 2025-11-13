@@ -1,5 +1,11 @@
 package KioskService;
 
+import ReadingRoomLogin.Member;
+import ReadingRoomLogin.MemberManager;
+import Seat.Seat;
+import SeatManager.SeatManager;
+
+
 public class CheckInService {
 
     private MemberManager memberManager;

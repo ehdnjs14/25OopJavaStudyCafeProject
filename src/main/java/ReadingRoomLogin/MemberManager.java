@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
-class MemberManager {
+public class MemberManager { //public 추가 11/13
     private ArrayList<Member> members = new ArrayList<>();
     private final File file = new File("members.txt");
 

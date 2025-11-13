@@ -1,5 +1,10 @@
 package KioskService;
 
+import Seat.Seat;
+import Seat.UsageSession;
+import SeatManager.SeatManager;
+
+
 public class CheckOutService {
 
     private SeatManager seatManager;

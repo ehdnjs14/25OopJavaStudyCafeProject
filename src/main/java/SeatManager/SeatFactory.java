@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import Seat.Seat;
+
 public class SeatFactory {
 
     // 모든 좌석 객체

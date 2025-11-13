@@ -3,6 +3,10 @@ package payment;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import Ticket.Ticket;
+import Ticket.DurationTicket;
+import Ticket.TimeTicket;
+
 public class TicketFactory {
     public Ticket createTicket(TicketProduct product) {
         switch (product) {
@@ -25,11 +29,11 @@ public class TicketFactory {
                 return new DurationTicket(LocalDate.now().plusMonths(3).atTime(23, 59, 59));
 
             case TIME_50H:
-                return new TimeTicket(50 * 60L);
+                return new TimeTicket(50 * 60);
             case TIME_100H:
-                return new TimeTicket(100 * 60L);
+                return new TimeTicket(100 * 60);
             case TIME_200H:
-                return new TimeTicket(200 * 60L);
+                return new TimeTicket(200 * 60);
 
             default:
                 throw new IllegalArgumentException("존재하지 않는 이용권입니다.");

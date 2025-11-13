@@ -1,6 +1,7 @@
 package SeatManager;
 
 import java.util.List;
+import Seat.Seat;
 
 public class SeatManager {
 

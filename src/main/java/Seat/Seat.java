@@ -33,5 +33,14 @@ public class Seat {
 		return status == Status.AVAILABLE; 
 	}
 	
+	// getter 추가
+    public String getSeatNumber() {
+        return seatNumber;
+    }
+
+    public String getOccupantId() {
+        return occupantId;
+    }
+	
 		
 }

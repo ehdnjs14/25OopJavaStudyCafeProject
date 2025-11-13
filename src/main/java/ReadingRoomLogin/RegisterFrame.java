@@ -56,7 +56,12 @@ class RegisterFrame extends JFrame {
                 return;
             }
 
-            manager.addMember(new Member(id, pw, name, "none"));
+            // 기존
+            // manager.addMember(new Member(id, pw, name, "none"));
+
+            // 수정 (티켓 null)
+            manager.addMember(new Member(id, pw, name, null));
+
             JOptionPane.showMessageDialog(this, "회원가입 완료!");
             dispose();
         });

@@ -7,6 +7,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import Seat.UsageSession;
+
 public class LogManager implements ILogManager {
     private static final String LOG_DIRECTORY = "logs";
     private static final String PAYMENTS_LOG_FILE = LOG_DIRECTORY + "/payments.jsonl";

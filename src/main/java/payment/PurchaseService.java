@@ -1,5 +1,10 @@
 package payment;
 
+import Ticket.Ticket;
+import Ticket.DurationTicket;
+import Ticket.TimeTicket;
+import ReadingRoomLogin.Member;
+
 public class PurchaseService {
     private final PriceManager priceManager;
     private final PaymentService paymentService;
