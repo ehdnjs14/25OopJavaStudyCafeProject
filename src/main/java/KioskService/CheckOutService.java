@@ -3,6 +3,7 @@ package KioskService;
 import Seat.Seat;
 import Seat.UsageSession;
 import SeatManager.SeatManager;
+import payment.ILogManager;
 
 
 public class CheckOutService {
@@ -11,7 +12,7 @@ public class CheckOutService {
     private SessionManager sessionManager;
 
     public CheckOutService(SeatManager seatManager,
-                           SessionManager sessionManager) {
+                           SessionManager sessionManager, ILogManager logManager) {
         this.seatManager = seatManager;
         this.sessionManager = sessionManager;
     }

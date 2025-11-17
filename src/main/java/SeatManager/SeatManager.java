@@ -1,5 +1,6 @@
 package SeatManager;
 
+import java.util.Collections;
 import java.util.List;
 import Seat.Seat;
 
@@ -68,6 +69,10 @@ public class SeatManager {
 
         seat.vacate();
         return true;
+    }
+
+    public List<Seat> getSeatMap() {
+        return Collections.unmodifiableList(seatList);
     }
 
     /**

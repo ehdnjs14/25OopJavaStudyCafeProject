@@ -45,7 +45,7 @@ public class PurchaseService {
         try {
             price = processPayment(extensionProduct, paymentMethod);
 
-            Member member = memberManager.findMemberByID(memberID);
+            Member member = memberManager.findMemberById(memberID);
             if (member == null || member.getTicket() == null) {
                 throw new Exception("존재하지 않는 회원이거나 연장할 이용권이 없습니다.");
             }

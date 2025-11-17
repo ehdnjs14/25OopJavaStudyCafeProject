@@ -4,7 +4,7 @@ import ReadingRoomLogin.Member;
 import Ticket.Ticket;
 
 public interface IMemberManager {
-    Member findMemberByID(String memberID);
+    Member findMemberById(String memberID);
     Member login(String id, String password);
     void register(String id, String password, String name);
     void setTicket(String memberID, Ticket newTicket);
