@@ -33,6 +33,8 @@ public class KioskMainFrame extends JFrame {
     private TicketFactory ticketFactory;
     private ILogManager logManager;
 
+    private MainMenuPanel mainMenuPanel; // 11/17 클래스 멤버 변수 선언
+    
     // 현재 로그인한 회원 정보
     private Member currentMember;
 
@@ -43,11 +45,12 @@ public class KioskMainFrame extends JFrame {
     public static final String SEAT_MAP_PANEL = "SeatMap";
     public static final String DAILY_TICKET_PANEL = "DailyTicket";
     public static final String PASS_PURCHASE_PANEL = "PassPurchase";
+    public static final String SHOP_PANEL = "Shop"; // 11/17 상품 주문 추가
 
 
     public KioskMainFrame() {
         setTitle("자리있조 스터디 카페 키오스크");
-        setSize(500, 700);
+        setSize(950, 700); // 11/17 사이즈 변경
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
@@ -59,18 +62,21 @@ public class KioskMainFrame extends JFrame {
         mainPanelContainer = new JPanel(cardLayout);
 
         LoginPanel loginPanel = new LoginPanel(this, memberManager);
-        MainMenuPanel mainMenuPanel = new MainMenuPanel(this, checkInService, checkOutService, breakService, seatManager);
+        // 11/17 로컬 변수 선언을 제거하고 멤버변수 할당
+        this.mainMenuPanel = new MainMenuPanel(this, checkInService, checkOutService, breakService, seatManager);
         TicketSelectionPanel ticketSelectionPanel = new TicketSelectionPanel(this);
         SeatMapPanel seatMapPanel = new SeatMapPanel(this, seatManager);
         DailyTicketPanel dailyTicketPanel = new DailyTicketPanel(this, priceManager);
         PassPurchasePanel passPurchasePanel = new PassPurchasePanel(this, priceManager);
-
+        ShopPanel shopPanel = new ShopPanel(this); // 11/17 상품주문 패널
+        
         loginPanel.setName(LOGIN_PANEL);
         mainMenuPanel.setName(MAIN_MENU_PANEL);
         ticketSelectionPanel.setName(TICKET_SELECTION_PANEL);
         seatMapPanel.setName(SEAT_MAP_PANEL);
         dailyTicketPanel.setName(DAILY_TICKET_PANEL);
         passPurchasePanel.setName(PASS_PURCHASE_PANEL);
+        shopPanel.setName(SHOP_PANEL); // 11/17
 
         mainPanelContainer.add(loginPanel, LOGIN_PANEL);
         mainPanelContainer.add(mainMenuPanel, MAIN_MENU_PANEL);
@@ -78,6 +84,7 @@ public class KioskMainFrame extends JFrame {
         mainPanelContainer.add(seatMapPanel, SEAT_MAP_PANEL);
         mainPanelContainer.add(dailyTicketPanel, DAILY_TICKET_PANEL);
         mainPanelContainer.add(passPurchasePanel, PASS_PURCHASE_PANEL);
+        mainPanelContainer.add(shopPanel, SHOP_PANEL); // 11/17
 
         add(mainPanelContainer);
 
@@ -111,11 +118,19 @@ public class KioskMainFrame extends JFrame {
     public void showPanel(String panelName) {
         if (panelName.equals(SEAT_MAP_PANEL)) {
             JPanel panel = findPanelByName(SEAT_MAP_PANEL);
-            if (panel instanceof SeatMapPanel) {
+            // 11/17 panel이 null인지 확인 추가
+            if (panel != null && panel instanceof SeatMapPanel) {
                 ((SeatMapPanel) panel).updateSeatStatus();
             }
         }
         cardLayout.show(mainPanelContainer, panelName);
+
+        // 11/17 메인 메뉴 패널로 전활될 때 환영 메시지 업데이트 호출
+        if (panelName.equals(MAIN_MENU_PANEL)) {      
+            SwingUtilities.invokeLater(() -> {
+                this.mainMenuPanel.updateWelcomeMessage(); 
+            });
+        }
     }
 
     // 패널 이름으로 객체를 찾는 헬퍼 메서드
