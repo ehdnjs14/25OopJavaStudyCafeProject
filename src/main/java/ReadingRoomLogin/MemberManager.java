@@ -18,6 +18,11 @@ public class MemberManager implements IMemberManager { //public 추가 11/13
     private ArrayList<Member> members = new ArrayList<>();
     private final File file = new File("members.txt");
 
+    // 11/17 생성자 추가: 프로그램 시작 시 파일에서 회원 정보 로드
+    public MemberManager() {
+    	loadMembers();
+    }
+
     @Override
     public Member findMemberById(String id) {
         for (Member m : members) {
@@ -37,6 +42,11 @@ public class MemberManager implements IMemberManager { //public 추가 11/13
 
     @Override
     public void register(String id, String password, String name) {
+        // 11/17 중복 ID 체크 추가
+        if (findMemberById(id) != null) {
+            System.err.println("ID " + id + "는 이미 존재합니다.");
+            return; 
+        }
         addMember(new Member(id, password, name, null));
     }
 
