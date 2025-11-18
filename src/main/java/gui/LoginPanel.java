@@ -49,19 +49,20 @@ public class LoginPanel extends JPanel {
             String pw = new String(pwField.getPassword());
 
             Member member = manager.findMemberById(id); // MemberManager 로직 호출
-            if (member != null && member.checkPassword(pw)) {
+           // 11/17 관리자 로그인 로직 변경
+            if (id.equals("admin") && pw.equals("admin")) {
+                JOptionPane.showMessageDialog(mainFrame, "관리자 로그인 성공!");
+                new AdminFrame(manager).setVisible(true); 
+            } else if (member != null && member.checkPassword(pw)) {
                 mainFrame.setCurrentMember(member); 
                 
-                if (id.equals("admin")) {
-                    JOptionPane.showMessageDialog(mainFrame, "관리자 로그인 성공!");
-                    new AdminFrame(manager).setVisible(true); 
-                } else {
-                    JOptionPane.showMessageDialog(mainFrame, member.getName() + "님, 환영합니다!");
-                    mainFrame.showPanel(KioskMainFrame.MAIN_MENU_PANEL);
-                }
+                JOptionPane.showMessageDialog(mainFrame, member.getName() + "님, 환영합니다!");
+                mainFrame.showPanel(KioskMainFrame.MAIN_MENU_PANEL);
+                
             } else {
                 JOptionPane.showMessageDialog(mainFrame, "아이디 또는 비밀번호가 틀렸습니다.");
             }
+            
             pwField.setText("");
         });
 
