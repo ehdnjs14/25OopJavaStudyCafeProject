@@ -38,7 +38,7 @@ public class MainMenuPanel extends JPanel {
         
         JButton checkInBtn = new JButton("입실");
         JButton checkOutBtn = new JButton("퇴실");
-        JButton breakBtn = new JButton("외출/복귀");
+        JButton breakBtn = new JButton("자리 이동하기");
         JButton extendBtn = new JButton("시간 연장(당일권)");
         JButton orderBtn = new JButton("상품 주문 (준비중)");
         JButton logoutBtn = new JButton("로그아웃");

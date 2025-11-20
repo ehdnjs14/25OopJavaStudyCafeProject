@@ -22,7 +22,7 @@ class AdminFrame extends JFrame {
     public AdminFrame(MemberManager manager) {
         this.manager = manager;
         setTitle("회원 관리 (관리자)");
-        setSize(500, 400);
+        setSize(1000, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 

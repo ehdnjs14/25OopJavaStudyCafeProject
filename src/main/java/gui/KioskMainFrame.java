@@ -47,7 +47,7 @@ public class KioskMainFrame extends JFrame {
 
     public KioskMainFrame() {
         setTitle("자리있조 스터디 카페 키오스크");
-        setSize(500, 700);
+        setSize(1000, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 

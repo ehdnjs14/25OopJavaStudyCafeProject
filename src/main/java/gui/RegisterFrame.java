@@ -19,7 +19,7 @@ class RegisterFrame extends JFrame {
     public RegisterFrame(MemberManager manager) {
         this.manager = manager;
         setTitle("회원가입");
-        setSize(400, 300);
+        setSize(1000, 700);
         setLocationRelativeTo(null);
         setLayout(new GridLayout(5, 2, 10, 10));
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
