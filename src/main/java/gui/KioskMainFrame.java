@@ -62,8 +62,8 @@ public class KioskMainFrame extends JFrame {
         MainMenuPanel mainMenuPanel = new MainMenuPanel(this, checkInService, checkOutService, breakService, seatManager);
         TicketSelectionPanel ticketSelectionPanel = new TicketSelectionPanel(this);
         SeatMapPanel seatMapPanel = new SeatMapPanel(this, seatManager);
-        DailyTicketPanel dailyTicketPanel = new DailyTicketPanel(this, priceManager);
-        PassPurchasePanel passPurchasePanel = new PassPurchasePanel(this, priceManager);
+        DailyTicketPanel dailyTicketPanel = new DailyTicketPanel(this, priceManager, purchaseService);
+        PassPurchasePanel passPurchasePanel = new PassPurchasePanel(this, priceManager, purchaseService);
 
         loginPanel.setName(LOGIN_PANEL);
         mainMenuPanel.setName(MAIN_MENU_PANEL);

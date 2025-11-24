@@ -3,26 +3,31 @@
  */
 package gui; 
 
+import ReadingRoomLogin.Member;
+import Ticket.Ticket;
 import payment.PriceManager;
 import payment.TicketProduct;
+import payment.PurchaseService;
 
-import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.BorderFactory;
-import java.awt.GridLayout;
-import java.awt.BorderLayout;
-import javax.swing.JTabbedPane;
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 
 public class PassPurchasePanel extends JPanel {
 
     private KioskMainFrame mainFrame;
     private PriceManager priceManager;
+    private PurchaseService purchaseService;
 
-    public PassPurchasePanel(KioskMainFrame mainFrame, PriceManager priceManager) {
+    private TicketProduct selectedProduct = null;
+    private int selectedPrice = 0;
+    private JLabel selectedInfoLabel;
+
+    public PassPurchasePanel(KioskMainFrame mainFrame, PriceManager priceManager, PurchaseService purchaseService) {
         this.mainFrame = mainFrame;
         this.priceManager = priceManager;
+        this.purchaseService = purchaseService;
 
         setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -32,37 +37,98 @@ public class PassPurchasePanel extends JPanel {
         JTabbedPane tabPane = new JTabbedPane();
 
         // 기간권 탭
-        JPanel durationPanel = new JPanel(new GridLayout(4, 1, 10, 10));
-        durationPanel.add(new JButton(TicketProduct.DURATION_1W.toString() + " (" + priceManager.getPrice(TicketProduct.DURATION_1W) + "원)"));
-        durationPanel.add(new JButton(TicketProduct.DURATION_2W.toString() + " (" + priceManager.getPrice(TicketProduct.DURATION_2W) + "원)"));
-        durationPanel.add(new JButton(TicketProduct.DURATION_1M.toString() + " (" + priceManager.getPrice(TicketProduct.DURATION_1M) + "원)"));
-        durationPanel.add(new JButton(TicketProduct.DURATION_3M.toString() + " (" + priceManager.getPrice(TicketProduct.DURATION_3M) + "원)"));
+        JPanel durationPanel = createProductPanel(new TicketProduct[] {
+                TicketProduct.DURATION_1W, TicketProduct.DURATION_2W,
+                TicketProduct.DURATION_1M, TicketProduct.DURATION_3M
+        });
         tabPane.addTab("기간권", durationPanel);
 
         // 시간권 탭
-        JPanel timePanel = new JPanel(new GridLayout(3, 1, 10, 10));
-        timePanel.add(new JButton(TicketProduct.TIME_50H.toString() + " (" + priceManager.getPrice(TicketProduct.TIME_50H) + "원)"));
-        timePanel.add(new JButton(TicketProduct.TIME_100H.toString() + " (" + priceManager.getPrice(TicketProduct.TIME_100H) + "원)"));
-        timePanel.add(new JButton(TicketProduct.TIME_200H.toString() + " (" + priceManager.getPrice(TicketProduct.TIME_200H) + "원)"));
+        JPanel timePanel = createProductPanel(new TicketProduct[] {
+                TicketProduct.TIME_50H, TicketProduct.TIME_100H, TicketProduct.TIME_200H
+        });
         tabPane.addTab("시간권", timePanel);
         
         add(tabPane, BorderLayout.CENTER);
 
-        JPanel bottomPanel = new JPanel(new GridLayout(1, 2, 10, 10));
-        JButton payBtn = new JButton("결제하기 (선택한 상품)");
+        JPanel bottomPanel = new JPanel(new BorderLayout(10, 10));
+
+        selectedInfoLabel = new JLabel("상품을 선택하세요.", SwingConstants.CENTER);
+        selectedInfoLabel.setBorder(BorderFactory.createEtchedBorder());
+        selectedInfoLabel.setPreferredSize(new Dimension(300, 40));
+        bottomPanel.add(selectedInfoLabel, BorderLayout.NORTH);
+
+        JPanel buttonGrid = new JPanel(new GridLayout(1, 2, 10, 10));
+        JButton payBtn = new JButton("결제하기");
         JButton backBtn = new JButton("뒤로가기");
-        bottomPanel.add(payBtn);
-        bottomPanel.add(backBtn);
+        buttonGrid.add(payBtn);
+        buttonGrid.add(backBtn);
         
+        bottomPanel.add(buttonGrid, BorderLayout.CENTER);
         add(bottomPanel, BorderLayout.SOUTH);
 
         payBtn.addActionListener(e -> {
-            JOptionPane.showMessageDialog(mainFrame, "정기권 구매 완료! 좌석 배치도 화면으로 이동합니다.");
-            mainFrame.showPanel(KioskMainFrame.SEAT_MAP_PANEL);
+            if (selectedProduct == null) {
+                JOptionPane.showMessageDialog(mainFrame, "상품을 먼저 선택해주세요.", "알림", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            Member member = mainFrame.getCurrentMember();
+            if (member == null) {
+                JOptionPane.showMessageDialog(mainFrame, "오류: 로그인 정보가 없습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+                mainFrame.showPanel(KioskMainFrame.LOGIN_PANEL);
+                return;
+            }
+
+            if (purchaseService.hasValidTicket(member.getId())) {
+                JOptionPane.showMessageDialog(mainFrame, "이미 유효한 이용권을 보유 중입니다.\n추가 구매가 불가합니다.", "구매 불가", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            PaymentDialog dialog = new PaymentDialog(mainFrame, "결제하기", selectedPrice);
+            dialog.setVisible(true);
+
+            if (dialog.isPaymentSuccess()) {
+                String method = dialog.getSelectedMethod();
+
+                boolean success = purchaseService.purchaseTicket(member.getId(), selectedProduct, method);
+
+                if (success) {
+                    JOptionPane.showMessageDialog(mainFrame, "이용권이 발급되었습니다. 좌석 배치도 화면으로 이동합니다.");
+                    selectedProduct = null;
+                    selectedInfoLabel.setText("상품을 선택하세요.");
+                    mainFrame.showPanel(KioskMainFrame.SEAT_MAP_PANEL);
+                } else {
+                    JOptionPane.showMessageDialog(mainFrame, "발급 처리 중 오류가 발생했습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+                }
+            }
         });
 
         backBtn.addActionListener(e -> {
-            mainFrame.showPanel(KioskMainFrame.TICKET_SELECTION_PANEL); 
+            selectedProduct = null;
+            selectedInfoLabel.setText("상품을 선택하세요.");
+            mainFrame.showPanel(KioskMainFrame.TICKET_SELECTION_PANEL);
         });
+    }
+
+    private JPanel createProductPanel(TicketProduct[] products) {
+        JPanel panel = new JPanel(new GridLayout(products.length, 1, 10, 10));
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        for (TicketProduct product : products) {
+            int price = priceManager.getPrice(product);
+            JButton btn = new JButton(product.toString() + " (" + price + "원)");
+
+            btn.addActionListener(e -> {
+                PassPurchasePanel.this.selectedProduct = product;
+                PassPurchasePanel.this.selectedPrice = price;
+
+                selectedInfoLabel.setText("선택: " + product.toString() + " / " + price + "원");
+
+                System.out.println("상품 선택됨: " + product);
+            });
+            panel.add(btn);
+        }
+        return panel;
     }
 }

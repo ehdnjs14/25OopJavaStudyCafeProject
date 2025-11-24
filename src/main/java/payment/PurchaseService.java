@@ -98,4 +98,9 @@ public class PurchaseService {
             System.err.println("결제 성공, 이용권 발급 실패: 관리자에게" + price + "원 환불 문의 바람\n010-1234-5678");
         }
     }
+
+    public boolean hasValidTicket(String memberID) {
+        Member member = memberManager.findMemberById(memberID);
+        return member != null && member.hasValidTicket();
+    }
 }
