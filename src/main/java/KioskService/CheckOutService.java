@@ -44,14 +44,25 @@ public class CheckOutService {
             return false;
         }
 
+        long usedMinutes = session.getDurationInMinutes();
+        Member member = (memberManager != null) ? memberManager.findMemberById(memberId) : null;
+
         // 시간권이면 이용 시간만큼 차감
-        if (memberManager != null) {
-            Member member = memberManager.findMemberById(memberId);
-            if (member != null && member.getTicket() instanceof TimeTicket) {
-                long minutes = session.getDurationInMinutes();
-                ((TimeTicket) member.getTicket()).deductTime((int) minutes);
-                memberManager.saveMembers();
+        if (member != null && member.getTicket() instanceof TimeTicket) {
+            ((TimeTicket) member.getTicket()).deductTime((int) usedMinutes);
+        }
+
+        // 스탬프 적립: 120분당 스탬프 1개 → 10개 시 쿠폰 전환
+        if (member != null) {
+            int carry = member.getStampCarryMinutes();
+            long total = carry + usedMinutes;
+            int earnedStamps = (int) (total / 120);
+            int newCarry = (int) (total % 120);
+            if (earnedStamps > 0) {
+                member.addStamps(earnedStamps);
             }
+            member.setStampCarryMinutes(newCarry);
+            memberManager.saveMembers();
         }
 
         // 입실/퇴실 시각과 이용 시간을 로그로 저장

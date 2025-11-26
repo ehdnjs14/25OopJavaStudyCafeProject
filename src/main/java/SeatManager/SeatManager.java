@@ -74,6 +74,26 @@ public class SeatManager {
     public List<Seat> getSeatMap() {
         return Collections.unmodifiableList(seatList);
     }
+    
+    // UI 등에서 읽기 전용으로 전체 리스트를 참조할 때 사용
+    public List<Seat> getSeatListInternal() {
+        return Collections.unmodifiableList(seatList);
+    }
+
+    /**
+     * 냉난방/존/좌석타입 조건으로 필터링.
+     * null인 조건은 무시하고 그대로 통과시킨다.
+     */
+    public List<Seat> filterSeats(Seat.AirType air, Seat.ZoneType zone, Seat.SeatType type) {
+        List<Seat> filtered = new java.util.ArrayList<>();
+        for (Seat seat : seatList) {
+            if (air != null && seat.getAirType() != air) continue;
+            if (zone != null && seat.getZoneType() != zone) continue;
+            if (type != null && seat.getSeatType() != type) continue;
+            filtered.add(seat);
+        }
+        return filtered;
+    }
 
     /**
      * findSeatByNumber(String seatNumber)

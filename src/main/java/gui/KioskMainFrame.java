@@ -109,7 +109,7 @@ public class KioskMainFrame extends JFrame {
         this.memberManager = new MemberManager();
         this.priceManager = new PriceManager("config/price.json"); 
 
-        SeatFactory seatFactory = new SeatFactory(25); // 25개 좌석 예시
+        SeatFactory seatFactory = new SeatFactory(50); // 좌석 배치도(1~50번) 대응
         this.seatManager = new SeatManager(seatFactory.getSeatListInternal());
 
         // 서비스 객체 초기화
