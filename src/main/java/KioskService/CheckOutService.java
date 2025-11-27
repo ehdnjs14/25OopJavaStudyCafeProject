@@ -52,15 +52,12 @@ public class CheckOutService {
             ((TimeTicket) member.getTicket()).deductTime((int) usedMinutes);
         }
 
-        // 스탬프 적립: 120분당 스탬프 1개 → 10개 시 쿠폰 전환
+        // 스탬프 적립: 120분당 스탬프 1개 → 10개 시 쿠폰 전환 (여러 시간 블록도 모두 적립)
         if (member != null) {
-            int carry = member.getStampCarryMinutes();
-            long total = carry + usedMinutes;
-            int earnedStamps = (int) (total / 120);
-            int newCarry = (int) (total % 120);
-            if (earnedStamps > 0) {
-                member.addStamps(earnedStamps);
-            }
+            long totalMinutes = (long) member.getStampCarryMinutes() + usedMinutes;
+            int earnedStamps = (int) (totalMinutes / 120);   // 120분 블록 모두 적립
+            int newCarry = (int) (totalMinutes % 120);       // 남은 분은 다음 세션으로 이월
+            if (earnedStamps > 0) member.addStamps(earnedStamps);
             member.setStampCarryMinutes(newCarry);
             memberManager.saveMembers();
         }

@@ -6,6 +6,7 @@ import ReadingRoomLogin.Member;
 import payment.ILogManager;
 import payment.OrderLogEntry;
 
+import java.net.URL;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
@@ -28,19 +29,29 @@ public class ShopPanel extends JPanel {
 
     // 상품 데이터 정의: [상품명, 가격]
     private final Map<String, String[][]> productData = new HashMap<>() {{
-        put("라면", new String[][]{
+        put("식사류", new String[][]{
             {"진라면", "4000"},
             {"신라면", "4500"},
-            {"불닭볶음면", "5000"}
+            {"불닭볶음면", "5000"},
+            {"짜파게티", "4500"},
+            {"김치볶음밥", "5000"},
+            {"참치마요주먹밥", "3500"}
         });
         put("음료", new String[][]{
             {"콜라", "2000"},
             {"사이다", "2000"},
-            {"에너지드링크", "3500"}
+            {"에너지드링크", "1500"},
+            {"아이스아메리카노", "3000"},
+            {"포카리스웨트", "2500"},
+            {"오렌지주스", "2500"}
         });
-        put("과자", new String[][]{
+        put("간식류", new String[][]{
             {"새우깡", "1500"},
-            {"감자칩", "2500"}
+            {"감자칩", "2500"},
+            {"홈런볼", "2000"},
+            {"핫바", "2500"},
+            {"소시지", "2000"},
+            {"구운계란(2개)", "1500"}
         });
     }};
 
@@ -54,7 +65,7 @@ public class ShopPanel extends JPanel {
     	JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setBackground(Theme.BACKGROUND_COLOR);
         topPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        JLabel titleLabel = new JLabel("✨ 상품 주문", SwingConstants.CENTER);
+        JLabel titleLabel = new JLabel("상품 주문", SwingConstants.CENTER);
         Theme.styleLabel(titleLabel, Theme.TITLE_FONT);
         JButton backButton = new JButton("돌아가기");
         Theme.styleSecondaryButton(backButton);
@@ -69,7 +80,7 @@ public class ShopPanel extends JPanel {
             }
             // 메인 메뉴 패널로 전환
             parentFrame.showPanel(KioskMainFrame.MAIN_MENU_PANEL); 
-            // clearCart(); // 돌아갈 때 장바구니를 비우고 싶다면 이 주석을 해제
+            // clearCart(); // 돌아갈 때 장바구니를 비우기
         });
         
         topPanel.add(backButton, BorderLayout.WEST);
@@ -81,6 +92,7 @@ public class ShopPanel extends JPanel {
         categoryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         categoryList.setFont(Theme.MAIN_FONT.deriveFont(Font.BOLD, 16f));
         categoryList.setBackground(Color.WHITE);
+        categoryList.setFixedCellHeight(50);
         categoryList.setPreferredSize(new Dimension(160, 0));
         
         categoryList.addListSelectionListener(e -> {
@@ -96,11 +108,12 @@ public class ShopPanel extends JPanel {
         categoryScroll.setBorder(BorderFactory.createLineBorder(new Color(220, 226, 235)));
         add(categoryScroll, BorderLayout.WEST);
 
-        // 2. 상품 목록 패널 (CENTER)
-        itemPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 12)); // 고정 크기 카드가 흐르도록 배치
-        itemPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        // 2. 상품 목록
+        itemPanel = new JPanel(new GridLayout(0, 3, 15, 15));
+        itemPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         itemPanel.setBackground(Color.WHITE);
         JScrollPane itemScroll = new JScrollPane(itemPanel);
+        itemScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         itemScroll.getVerticalScrollBar().setUnitIncrement(16);
         add(itemScroll, BorderLayout.CENTER);
 
@@ -171,8 +184,34 @@ public class ShopPanel extends JPanel {
         btn.setHorizontalTextPosition(SwingConstants.CENTER);
         btn.setVerticalTextPosition(SwingConstants.BOTTOM);
         btn.setIconTextGap(10);
-        btn.setIcon(createPlaceholderIcon(130, 120));
+        Icon icon = loadResizedIcon(name, 130, 120);
+        if (icon == null) {
+            icon = createPlaceholderIcon(130, 120);
+        }
+        btn.setIcon(icon);
         return btn;
+    }
+
+    // 클래스패스 images 폴더에서 아이콘을 찾아 리사이즈 (jpg 우선, png 보조)
+    private ImageIcon loadResizedIcon(String imageName, int width, int height) {
+        String[] candidates = {
+            "images/" + imageName + ".jpg",
+            "images/" + imageName + ".png"
+        };
+        try {
+            for (String path : candidates) {
+                URL url = getClass().getClassLoader().getResource(path);
+                if (url != null) {
+                    ImageIcon originalIcon = new ImageIcon(url);
+                    Image img = originalIcon.getImage();
+                    Image resized = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+                    return new ImageIcon(resized);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private Icon createPlaceholderIcon(int w, int h) {
