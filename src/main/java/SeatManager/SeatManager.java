@@ -1,3 +1,4 @@
+
 package SeatManager;
 
 import java.util.Collections;
@@ -89,5 +90,23 @@ public class SeatManager {
             }
         }
         return null;
+    }
+
+    /**
+     * 좌석 이동: 현재 좌석을 비우고 새 좌석을 점유.
+     */
+    public Seat moveSeat(String memberId, String newSeatNumber) {
+        if (memberId == null || newSeatNumber == null) return null;
+        Seat current = findSeatByMember(memberId);
+        if (current == null) return null;
+
+        Seat target = findSeatByNumber(newSeatNumber);
+        if (target == null || !target.isAvailable()) {
+            return null;
+        }
+
+        current.vacate();
+        target.occupy(memberId);
+        return target;
     }
 }
