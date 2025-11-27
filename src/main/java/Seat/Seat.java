@@ -1,3 +1,4 @@
+
 package Seat;
 //좌석 1개의 상태를 관리
 public class Seat {
