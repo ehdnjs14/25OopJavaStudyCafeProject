@@ -377,7 +377,7 @@ private static class CoffeeStamp extends JPanel {
         UsageSession session = sessionManager.getActiveSession(member.getId());
         if (session != null) {
             long minutes = session.getDurationInMinutes();
-            sessionInfoLabel.setText(minutes + "분"); // 텍스트 간소화 (제목은 createStyledInfoRow에 있음)
+            sessionInfoLabel.setText(formatMinutesAsHoursAndMinutes(minutes)); // 제목은 createStyledInfoRow에 있음
         } else {
             sessionInfoLabel.setText("-");
         }
@@ -385,6 +385,12 @@ private static class CoffeeStamp extends JPanel {
         updateTicketInfo(member, session);
         currentStampCount = member.getStampCount();
         buildStampGrid();
+    }
+
+    private String formatMinutesAsHoursAndMinutes(long minutes) {
+        long hours = minutes / 60;
+        long remainingMinutes = minutes % 60;
+        return hours + "시간 " + remainingMinutes + "분";
     }
 
     private void updateTicketInfo(Member member, UsageSession session) {
