@@ -17,10 +17,10 @@ import java.util.Map;
 import java.util.Vector;
 
 public class ShopPanel extends JPanel {
-	
-	private KioskMainFrame parentFrame; // KioskMainFrame 인스턴스 저장
+
+    private KioskMainFrame parentFrame; // KioskMainFrame 인스턴스 저장
     private ILogManager logManager;     // 주문 로그용
-	
+
     // 주문 정보를 저장할 맵 (상품명 -> 수량)
     private Map<String, Integer> orderMap = new HashMap<>();
     private JPanel cartPanel; // 장바구니 항목들을 담을 패널
@@ -30,63 +30,63 @@ public class ShopPanel extends JPanel {
     // 상품 데이터 정의: [상품명, 가격]
     private final Map<String, String[][]> productData = new HashMap<>() {{
         put("식사류", new String[][]{
-            {"진라면", "4000"},
-            {"신라면", "4500"},
-            {"불닭볶음면", "5000"},
-            {"짜파게티", "4500"},
-            {"김치볶음밥", "5000"},
-            {"참치마요주먹밥", "3500"}
+                {"진라면", "4000"},
+                {"신라면", "4500"},
+                {"불닭볶음면", "5000"},
+                {"짜파게티", "4500"},
+                {"김치볶음밥", "5000"},
+                {"참치마요주먹밥", "3500"}
         });
         put("음료", new String[][]{
-            {"콜라", "2000"},
-            {"사이다", "2000"},
-            {"에너지드링크", "1500"},
-            {"아이스아메리카노", "3000"},
-            {"포카리스웨트", "2500"},
-            {"오렌지주스", "2500"}
+                {"콜라", "2000"},
+                {"사이다", "2000"},
+                {"에너지드링크", "1500"},
+                {"아이스아메리카노", "3000"},
+                {"포카리스웨트", "2500"},
+                {"오렌지주스", "2500"}
         });
         put("간식류", new String[][]{
-            {"새우깡", "1500"},
-            {"감자칩", "2500"},
-            {"홈런볼", "2000"},
-            {"핫바", "2500"},
-            {"소시지", "2000"},
-            {"구운계란(2개)", "1500"}
+                {"새우깡", "1500"},
+                {"감자칩", "2500"},
+                {"홈런볼", "2000"},
+                {"핫바", "2500"},
+                {"소시지", "2000"},
+                {"구운계란(2개)", "1500"}
         });
     }};
 
     public ShopPanel(KioskMainFrame parentFrame, ILogManager logManager) {
-    	this.parentFrame = parentFrame;
+        this.parentFrame = parentFrame;
         this.logManager = logManager;
-        
-    	setLayout(new BorderLayout());
+
+        setLayout(new BorderLayout());
         setBackground(Theme.BACKGROUND_COLOR);
-    	
-    	JPanel topPanel = new JPanel(new BorderLayout());
+
+        JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setBackground(Theme.BACKGROUND_COLOR);
         topPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         JLabel titleLabel = new JLabel("상품 주문", SwingConstants.CENTER);
         Theme.styleLabel(titleLabel, Theme.TITLE_FONT);
         JButton backButton = new JButton("돌아가기");
         Theme.styleSecondaryButton(backButton);
-        
+
         backButton.addActionListener(e -> {
             // 장바구니 비우기 확인 (선택 사항)
             if (!orderMap.isEmpty()) {
-                int confirm = JOptionPane.showConfirmDialog(this, 
-                    "장바구니에 상품이 남아있습니다. 정말 돌아가시겠습니까?", 
-                    "경고", JOptionPane.YES_NO_OPTION);
+                int confirm = JOptionPane.showConfirmDialog(this,
+                        "장바구니에 상품이 남아있습니다. 정말 돌아가시겠습니까?",
+                        "경고", JOptionPane.YES_NO_OPTION);
                 if (confirm != JOptionPane.YES_OPTION) return;
             }
             // 메인 메뉴 패널로 전환
-            parentFrame.showPanel(KioskMainFrame.MAIN_MENU_PANEL); 
+            parentFrame.showPanel(KioskMainFrame.MAIN_MENU_PANEL);
             // clearCart(); // 돌아갈 때 장바구니를 비우기
         });
-        
+
         topPanel.add(backButton, BorderLayout.WEST);
         topPanel.add(titleLabel, BorderLayout.CENTER);
         add(topPanel, BorderLayout.NORTH); // 상단에 배치
-        
+
         // 1. 카테고리 패널 (WEST)
         JList<String> categoryList = new JList<>(new Vector<>(productData.keySet()));
         categoryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -94,7 +94,7 @@ public class ShopPanel extends JPanel {
         categoryList.setBackground(Color.WHITE);
         categoryList.setFixedCellHeight(50);
         categoryList.setPreferredSize(new Dimension(160, 0));
-        
+
         categoryList.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 String selectedCategory = categoryList.getSelectedValue();
@@ -103,7 +103,7 @@ public class ShopPanel extends JPanel {
                 }
             }
         });
-        
+
         JScrollPane categoryScroll = new JScrollPane(categoryList);
         categoryScroll.setBorder(BorderFactory.createLineBorder(new Color(220, 226, 235)));
         add(categoryScroll, BorderLayout.WEST);
@@ -121,17 +121,17 @@ public class ShopPanel extends JPanel {
         JPanel orderPanel = new JPanel(new BorderLayout());
         orderPanel.setBackground(Theme.BACKGROUND_COLOR);
         orderPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        
+
         cartPanel = new JPanel();
         cartPanel.setLayout(new BoxLayout(cartPanel, BoxLayout.Y_AXIS)); // 장바구니 항목을 세로로 쌓음
         cartPanel.setBackground(Color.WHITE);
-        
+
         JScrollPane cartScrollPane = new JScrollPane(cartPanel);
         cartScrollPane.setBorder(BorderFactory.createTitledBorder("🛒 장바구니 내역"));
-        
+
         totalLabel = new JLabel("총 결제 금액: 0원", SwingConstants.RIGHT);
         totalLabel.setFont(Theme.TITLE_FONT.deriveFont(18f));
-        
+
         JButton confirmButton = new JButton("주문 완료 및 결제");
         Theme.styleButton(confirmButton);
         confirmButton.setBackground(new Color(60, 179, 113));
@@ -149,7 +149,7 @@ public class ShopPanel extends JPanel {
         orderPanel.add(bottomControlPanel, BorderLayout.SOUTH);
 
         add(orderPanel, BorderLayout.EAST);
-        
+
         // 초기 상품 목록 표시 (첫 번째 카테고리)
         if (!productData.isEmpty()) {
             categoryList.setSelectedIndex(0);
@@ -165,7 +165,7 @@ public class ShopPanel extends JPanel {
         for (String[] item : items) {
             String name = item[0];
             int price = Integer.parseInt(item[1]);
-            
+
             // 상품 버튼 생성
             JButton itemButton = createItemButton(name, price);
             itemButton.addActionListener(e -> addItemToCart(name)); // 장바구니에 추가
@@ -175,7 +175,7 @@ public class ShopPanel extends JPanel {
         itemPanel.revalidate();
         itemPanel.repaint();
     }
-    
+
     private JButton createItemButton(String name, int price) {
         String text = String.format("<html><center>%s<br><font size=5>%,d원</font></center></html>", name, price);
         JButton btn = new JButton(text);
@@ -195,8 +195,8 @@ public class ShopPanel extends JPanel {
     // 클래스패스 images 폴더에서 아이콘을 찾아 리사이즈 (jpg 우선, png 보조)
     private ImageIcon loadResizedIcon(String imageName, int width, int height) {
         String[] candidates = {
-            "images/" + imageName + ".jpg",
-            "images/" + imageName + ".png"
+                "images/" + imageName + ".jpg",
+                "images/" + imageName + ".png"
         };
         try {
             for (String path : candidates) {
@@ -222,13 +222,13 @@ public class ShopPanel extends JPanel {
         g2.dispose();
         return new ImageIcon(img);
     }
-    
+
     // 장바구니에 상품 추가
     private void addItemToCart(String name) {
         orderMap.put(name, orderMap.getOrDefault(name, 0) + 1);
         updateCartDisplay();
     }
-    
+
     // 장바구니에서 상품 삭제
     private void removeItemFromCart(String name) {
         orderMap.remove(name);
@@ -249,30 +249,30 @@ public class ShopPanel extends JPanel {
         for (Map.Entry<String, Integer> entry : orderMap.entrySet()) {
             String name = entry.getKey();
             int quantity = entry.getValue();
-            
+
             int price = getProductPrice(name);
             long itemTotal = (long) price * quantity;
             totalAmount += itemTotal;
-            
+
             // 장바구니 항목 UI 생성 (상품명, 수량, 가격, 삭제 버튼)
             JPanel itemRow = new JPanel(new BorderLayout());
             itemRow.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
-            
+
             String itemText = String.format("%s x %d (%,d원)", name, quantity, itemTotal);
             JLabel itemLabel = new JLabel(itemText);
             itemLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-            
+
             JButton deleteButton = new JButton("삭제");
             deleteButton.setPreferredSize(new Dimension(70, 30));
             deleteButton.addActionListener((ActionEvent e) -> removeItemFromCart(name));
 
             itemRow.add(itemLabel, BorderLayout.CENTER);
             itemRow.add(deleteButton, BorderLayout.EAST);
-            
+
             cartPanel.add(itemRow);
             cartPanel.add(Box.createVerticalStrut(5)); // 항목 사이의 간격 추가
         }
-        
+
         // 장바구니가 비어 있을 때 메시지 표시
         if (orderMap.isEmpty()) {
             cartPanel.add(new JLabel("   장바구니가 비어 있습니다.", SwingConstants.CENTER));
@@ -285,7 +285,7 @@ public class ShopPanel extends JPanel {
         // 총 금액 업데이트
         totalLabel.setText(String.format("총 결제 금액: %,d원", totalAmount));
     }
-    
+
     // 상품 가격을 찾는 헬퍼 메서드
     private int getProductPrice(String name) {
         for (String[][] items : productData.values()) {
@@ -298,13 +298,26 @@ public class ShopPanel extends JPanel {
         return 0;
     }
 
-    // 주문 완료 로직 (기존 동작 유지)
+    // 주문 완료 로직 (수정됨: 결제창 호출)
     private void completeOrder() {
         if (orderMap.isEmpty()) {
             JOptionPane.showMessageDialog(this, "장바구니가 비어 있습니다.");
             return;
         }
+
+        // 1. 총액 계산
         long total = calculateTotalAmount();
+
+        // 2. 결제 다이얼로그 띄우기
+        PaymentDialog dialog = new PaymentDialog(parentFrame, "상품 결제", (int) total);
+        dialog.setVisible(true); // 모달: 결제 완료/취소 시까지 대기
+
+        // 3. 결제 결과 확인 (취소/실패 시 중단)
+        if (!dialog.isPaymentSuccess()) {
+            return;
+        }
+
+        // 4. 결제 성공 시 주문 처리 및 로그 기록
         StringBuilder summaryBuilder = new StringBuilder();
         for (Map.Entry<String, Integer> entry : orderMap.entrySet()) {
             String name = entry.getKey();
@@ -313,10 +326,9 @@ public class ShopPanel extends JPanel {
             summaryBuilder.append(String.format("%s x %d개 (%,d원)\n", name, quantity, itemTotal));
         }
 
-        // 주문 로그 기록
         logOrderDetails(summaryBuilder.toString(), total);
 
-        JOptionPane.showMessageDialog(this, "주문이 완료되었습니다!");
+        JOptionPane.showMessageDialog(this, "결제가 완료되었습니다!\n주문하신 상품이 곧 준비됩니다.");
         clearCart();
     }
 
@@ -330,8 +342,7 @@ public class ShopPanel extends JPanel {
         return totalAmount;
     }
 
-     /**
-     * 11/23
+    /**
      * 로그 파일에 주문 내역을 기록하는 메서드
      * 형식: 시간, 이용자ID, 좌석번호, 주문내역, 총액
      */
@@ -348,13 +359,13 @@ public class ShopPanel extends JPanel {
 
         Seat seat = parentFrame.getSeatManager().findSeatByMember(memberId);
         if (seat != null) {
-            seatNumber = String.valueOf(seat.getSeatNumber()); 
+            seatNumber = String.valueOf(seat.getSeatNumber());
         }
 
         String detailedOrder = orderSummary.trim()
-                                           .replace("\n", ", ")
-                                           .replaceAll(" +", " ")
-                                           .replaceAll("[,;] $", ""); // 끝 콤마/세미콜론 제거
+                .replace("\n", ", ")
+                .replaceAll(" +", " ")
+                .replaceAll("[,;] $", ""); // 끝 콤마/세미콜론 제거
 
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         OrderLogEntry entry = new OrderLogEntry(timestamp, memberId, seatNumber, detailedOrder, totalAmount);
